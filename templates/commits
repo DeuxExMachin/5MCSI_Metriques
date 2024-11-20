@@ -1,1 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Commits par Minute</title>
+    <style>
+        .bar {
+            width: 10px;
+            background-color: blue;
+            display: inline-block;
+            margin: 1px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nombre de commits par minute</h1>
+    <div style="display: flex; align-items: flex-end;">
+        {% for item in data %}
+            <div class="bar" style="height: {{ item.count * 10 }}px;" title="Minute {{ item.minute }} : {{ item.count }} commits"></div>
+        {% endfor %}
+    </div>
+</body>
+</html>
 
