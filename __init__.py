@@ -1,34 +1,19 @@
 from flask import Flask, render_template_string, render_template, jsonify
-from flask import render_template
 from flask import json
 from datetime import datetime
 from urllib.request import urlopen
 import sqlite3
-import requests
 from collections import Counter
 
-def get_commit_dates():
-    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
-    response = requests.get(url)
-    commits = response.json()
-    commit_dates = [commit['commit']['author']['date'] for commit in commits]
-    return commit_dates
+app = Flask(__name__)
 
-def group_commits_by_minute(commit_dates):
-    minutes = [datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ').minute for date in commit_dates]
-    commit_counts = Counter(minutes)
-    return commit_counts    
-  
-app = Flask(__name__)                                                                                                                  
-                                                                                                                                       
 @app.route('/')
 def hello_world():
-    return render_template('hello.html') #Comm2
-  
+    return render_template('hello.html')  # Comm2
+
 @app.route("/contact/")
 def MaPremiereAPI():
     return render_template('contact.html')
-
 
 @app.route('/tawarano/')
 def meteo():
@@ -38,7 +23,7 @@ def meteo():
     results = []
     for list_element in json_content.get('list', []):
         dt_value = list_element.get('dt')
-        temp_day_value = list_element.get('main', {}).get('temp') - 273.15 # Conversion de Kelvin en °c 
+        temp_day_value = list_element.get('main', {}).get('temp') - 273.15  # Conversion de Kelvin en °C
         results.append({'Jour': dt_value, 'temp': temp_day_value})
     return jsonify(results=results)
 
@@ -50,15 +35,37 @@ def mongraphique():
 def mongraphiquehistogramme():
     return render_template("graphique histogramme.html")
 
+
+def get_commit_dates():
+    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
+    try:
+        with urlopen(url) as response:
+            commits = json.load(response)
+            commit_dates = [commit['commit']['author']['date'] for commit in commits]
+            return commit_dates
+    except Exception as e:
+        print(f"Erreur lors de la récupération des commits : {e}")
+        return []
+
+def group_commits_by_minute(commit_dates):
+    try:
+        minutes = [datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ').minute for date in commit_dates]
+        commit_counts = Counter(minutes)
+        return commit_counts
+    except Exception as e:
+        print(f"Erreur lors de l'analyse des minutes : {e}")
+        return {}
+
 @app.route('/commits/')
-def commits():
+def display_commits():
     commit_dates = get_commit_dates()
     commit_counts = group_commits_by_minute(commit_dates)
 
     labels = list(commit_counts.keys())
-    values = list(commit_counts.values())
+    values = list(commit_counts.values()) 
 
     return render_template('commits.html', labels=labels, values=values)
-  
+
+
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)
