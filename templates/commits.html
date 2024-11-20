@@ -3,70 +3,19 @@
 <head>
     <title>Commits par Minute</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        h1 {
-            margin: 20px;
-            color: #333;
-        }
-        .graph-container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            height: 300px;
-            width: 90%;
-            max-width: 1000px;
-            margin: 0 auto;
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
         .bar {
-            flex: 1;
-            margin: 0 2px;
-            background-color: #007bff;
-            border-radius: 4px 4px 0 0;
-            position: relative;
-        }
-        .bar:hover {
-            background-color: #0056b3;
-        }
-        .bar-label {
-            position: absolute;
-            bottom: -20px;
-            font-size: 12px;
-            color: #555;
-            text-align: center;
-            width: 100%;
-        }
-        .bar-count {
-            position: absolute;
-            top: -20px;
-            font-size: 12px;
-            color: #333;
-            text-align: center;
-            width: 100%;
+            width: 10px;
+            background-color: blue;
+            display: inline-block;
+            margin: 1px;
         }
     </style>
 </head>
 <body>
     <h1>Nombre de commits par minute</h1>
-    <div class="graph-container">
+    <div style="display: flex; align-items: flex-end;">
         {% for item in data %}
-            <div 
-                class="bar" 
-                style="height: {{ item.count * 5 }}px;" 
-                title="Minute {{ item.minute }} : {{ item.count }} commits">
-                <span class="bar-count">{{ item.count }}</span>
-                <span class="bar-label">{{ item.minute }}</span>
-            </div>
+            <div class="bar" style="height: {{ item.count * 10 }}px;" title="Minute {{ item.minute }} : {{ item.count }} commits"></div>
         {% endfor %}
     </div>
 </body>
